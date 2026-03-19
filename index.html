@@ -83,7 +83,13 @@
 
 <script>
 let step = -1; // start before data collection
-let data = {};
+let data = {
+  name: data.name,
+  phone: data.phone,
+  email: data.email,
+  requirement: data.requirement,
+  date: data.date
+};
 
 function addMsg(text, cls) {
   document.getElementById("chat").innerHTML += 
