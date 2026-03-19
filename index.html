@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Smart Rental Assistant</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #0f172a;
+      color: white;
+    }
+
+    #chat {
+      max-width: 420px;
+      margin: 30px auto;
+      padding: 15px;
+      background: #1e293b;
+      border-radius: 15px;
+      height: 500px;
+      overflow-y: auto;
+    }
+
+    .msg {
+      padding: 10px;
+      margin: 8px;
+      border-radius: 10px;
+      max-width: 75%;
+    }
+
+    .bot {
+      background: #334155;
+    }
+
+    .user {
+      background: #2563eb;
+      margin-left: auto;
+      text-align: right;
+    }
+
+    #inputBox {
+      display: flex;
+      max-width: 420px;
+      margin: auto;
+    }
+
+    input {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      outline: none;
+    }
+
+    button {
+      padding: 12px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    .options {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 10px;
+    }
+
+    .option-btn {
+      background: #475569;
+      padding: 6px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div id="chat"></div>
+
+<div id="inputBox">
+  <input id="input" placeholder="Type here..." />
+  <button onclick="send()">Send</button>
+</div>
+
+<script>
+let step = -1; // start before data collection
+let data = {};
+
+function addMsg(text, cls) {
+  document.getElementById("chat").innerHTML += 
+    `<div class="msg ${cls}">${text}</div>`;
+  scroll();
+}
+
+function addOptions(options) {
+  let html = '<div class="options">';
+  options.forEach(opt => {
+    html += `<div class="option-btn" onclick="selectOption('${opt}')">${opt}</div>`;
+  });
+  html += '</div>';
+  document.getElementById("chat").innerHTML += html;
+  scroll();
+}
+
+function selectOption(value) {
+  document.getElementById("input").value = value;
+  send();
+}
+
+function scroll() {
+  let chat = document.getElementById("chat");
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function botReply(text, options = null) {
+  addMsg("Typing...", "bot");
+  setTimeout(() => {
+    document.querySelector(".bot:last-child").remove();
+    addMsg(text, "bot");
+    if (options) addOptions(options);
+  }, 800);
+}
+
+// validation
+function validName(name) {
+  return /^[a-zA-Z ]{2,}$/.test(name);
+}
+
+function validPhone(phone) {
+  return /^[+]?[0-9]{9,15}$/.test(phone);
+}
+
+function validEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function send() {
+  let input = document.getElementById("input").value.trim();
+  if (!input) return;
+
+  addMsg(input, "user");
+  document.getElementById("input").value = "";
+
+  // 🔥 Conversation flow
+  if (step === -1) {
+    data.intent = input;
+    step = 0;
+    botReply("Nice 👍 I can help you with that. First, what’s your name?");
+  }
+
+  else if (step === 0) {
+    if (!validName(input)) {
+      botReply("That doesn’t look like a name 😅 Try again?");
+      return;
+    }
+    data.name = input;
+    step++;
+    botReply(`Nice to meet you, ${data.name}! What's your phone number?`);
+  }
+
+  else if (step === 1) {
+    if (!validPhone(input)) {
+      botReply("Hmm that number seems off. Enter a valid number.");
+      return;
+    }
+    data.phone = input;
+    step++;
+    botReply("What type of rental are you looking for?", ["APARTMENT", "BEDROOM", "HOUSE"]);
+  }
+
+  else if (step === 2) {
+    data.requirement = input;
+    step++;
+    botReply("Would you like to share your email? (type 'skip' if not)");
+  }
+
+  else if (step === 3) {
+    if (input.toLowerCase() !== "skip" && !validEmail(input)) {
+      botReply("That email looks incorrect. Try again or type 'skip'.");
+      return;
+    }
+    data.email = input === "skip" ? "" : input;
+    step++;
+    botReply("When should we contact you?");
+  }
+
+  else if (step === 4) {
+    data.date = input;
+
+    fetch("https://script.google.com/macros/s/AKfycbwoCfx_4WL0C-u6w0G3KeHQCDQNsjspFoR3ArRc8Ovx7oCvpsYMrzZUOMxiShV6w3vn/exec", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify(data)
+})
+.then(res => res.text())
+.then(res => console.log("RESPONSE:", res))
+.catch(err => console.error("ERROR:", err));
+
+    botReply("Perfect! Our team will reach out shortly 😊");
+  }
+}
+
+// 🔥 START CONVERSATION
+setTimeout(() => {
+  botReply("Hey 👋 How can I help you today?", ["Rent", "Buy", "Just exploring"]);
+}, 500);
+</script>
+
+</body>
+</html>
