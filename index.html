@@ -193,9 +193,12 @@ function send() {
   },
   body: JSON.stringify(data)
 })
-.then(res => res.text())
-.then(res => console.log("RESPONSE:", res))
-.catch(err => console.error("ERROR:", err));
+.then(res => res.json())
+.then(res => {
+  if(res.status === "success") botReply("Perfect! Our team will reach out shortly 😊");
+  else logError("Server responded, but not success: " + JSON.stringify(res));
+})
+.catch(err => logError("Failed to send data: " + err));
 
     botReply("Perfect! Our team will reach out shortly 😊");
   }
