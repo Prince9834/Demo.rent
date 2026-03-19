@@ -103,7 +103,7 @@ function send() {
   if(step === 5){
     data.date = input; step++;
     // 🔥 Send data to Google Apps Script
-    fetch("https://script.google.com/macros/s/AKfycbwD0RkkvYz7sd_Xj0SNJITAkIf_S3y8lUk0W6X9dlhYpQsGDwf92DpoEbQpCzm7LXOy/exec", {
+    fetch("https://script.google.com/macros/s/AKfycbykfhMYUYyTDroVmHWkrXi60_Rp_lx9N7x-x96RP1K9FBxX-RsidYbdBTP4_15H3Uds/exec", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
