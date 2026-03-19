@@ -194,12 +194,8 @@ function send() {
   body: JSON.stringify(data)
   mode: 'no-cors'
 })
-.then(res => res.json())
-.then(res => {
-  if(res.status === "success") botReply("Perfect! Our team will reach out shortly 😊");
-  else logError("Server responded, but not success: " + JSON.stringify(res));
-})
-.catch(err => logError("Failed to send data: " + err));
+.then(() => botReply("Data sent!"))
+.catch(err => botReply("Error sending data: " + err));
 
 // 🔥 START CONVERSATION
 setTimeout(() => {
