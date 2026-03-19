@@ -186,12 +186,13 @@ function send() {
   else if (step === 4) {
     data.date = input;
 
-    fetch("https://script.google.com/macros/s/AKfycbxVotxlGkQtffoMSe0UNu30qM5qsyjPagkF_ubwhms3P-Bpsogjvwq3TXbP5sXRzwIl/exec", {
+    fetch("https://script.google.com/macros/s/AKfycby_kb7Avjdt37VZhWKgDJUvNTztq4waKK5eJJRc2j0rX3F5fzw3GwCg8wrdXRU6RXvT/exec", {
   method: "POST",
   headers: {
     "Content-Type": "application/json"
   },
   body: JSON.stringify(data)
+  mode: 'no-cors'
 })
 .then(res => res.json())
 .then(res => {
@@ -199,10 +200,6 @@ function send() {
   else logError("Server responded, but not success: " + JSON.stringify(res));
 })
 .catch(err => logError("Failed to send data: " + err));
-
-    botReply("Perfect! Our team will reach out shortly 😊");
-  }
-}
 
 // 🔥 START CONVERSATION
 setTimeout(() => {
