@@ -107,7 +107,7 @@ function send() {
       method: "GET",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
-      mode: 'no-cors'
+
     })
     .then(()=> botReply("Perfect! Your info was sent ✅"))
     .catch(()=> botReply("Data sent (maybe)! Check the Sheet just in case."));
